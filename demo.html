@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>demo</title>
+	<style>
+		body,h1,input,button,select{
+			font-size: 30px;
+			line-height: 1.8;
+		}
+	</style>
+</head>
+<body>
+	<h1>员工查询</h1>
+	<label>请输入员工编号：</label>
+	<input id="keyword" type="text"><br>
+	<button id="search">查询</button>
+	<p id="search-result"></p><br>
+	<h1>员工创建</h1>
+	<label>请输入员工姓名：</label>
+	<input id="staff-name" type="text"><br>
+	<label>请输入员工编号：</label>
+	<input id="staff-number" type="text"><br>
+	<label>请输入员工性别：</label>
+	<select id="staff-sex">
+		<option value="男">男</option>
+		<option value="女">女</option>
+	</select><br>
+	<label>请输入员工职位：</label>
+	<input id="staff-job" type="text"><br>
+	<button id="save">保存</button>
+	<p id="create-result"></p>
+	<script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script>
+		// jQuery封装的ajax请求（jsonp）
+		$(document).ready(function(){ 
+			$("#search").click(function(){ 
+				$.ajax({ 
+				    type: "GET", 	
+					url: "http://127.0.0.1:80/ajax/server.php?number=" + $("#keyword").val(),
+					dataType: "json",
+					// dataType: "jsonp",//jsonp
+					// jsonp: "callback",//callback与后台一致
+					success: function(data) {
+						if (data.success) {
+							$("#search-result").html(data.msg);
+						} else {
+							$("#search-result").html("出现错误：" + data.msg);
+						}  
+					},
+					error: function(jqXHR){     
+					   alert("发生错误：" + jqXHR.status);  
+					},     
+				});
+			});
+			
+			$("#save").click(function(){ 
+				$.ajax({ 
+				    type: "POST", 	
+					url: "http://127.0.0.1:80/ajax/server.php",
+					data: {
+						name: $("#staff-name").val(), 
+						number: $("#staff-number").val(), 
+						sex: $("#staff-sex").val(), 
+						job: $("#staff-job").val()
+					},
+					dataType: "json",
+					success: function(data){
+						if (data.success) { 
+							$("#create-result").html(data.msg);
+						} else {
+							$("#create-result").html("出现错误：" + data.msg);
+						}  
+					},
+					error: function(jqXHR){     
+					   alert("发生错误：" + jqXHR.status);  
+					},     
+				});
+			});
+		});
+
+		// 原生ajax请求
+		// document.getElementById("search").onclick = function(){
+		// 	// 发送ajax查询请求并处理
+		// 	var request = new XMLHttpRequest();
+		// 	request.open("GET","server.php?number="+document.getElementById("keyword").value);
+		// 	request.send();
+		// 	request.onreadystatechange = function(){
+		// 		if(request.readyState === 4){
+		// 			if(request.status === 200){
+		// 				// document.getElementById("search-result").innerHTML = request.responseText;
+		// 				var data = JSON.parse(request.responseText);
+		// 				if(data.success){
+		// 					document.getElementById("search-result").innerHTML = data.msg;
+		// 				}else{
+		// 					document.getElementById("search-result").innerHTML = "出现错误：" + data.msg;
+		// 				}
+		// 			}else{
+		// 				alert("发生错误：" + request.status);
+		// 			}
+		// 		}
+		// 	}
+		// }
+
+		// document.getElementById("save").onclick = function(){
+		// 	// 发送ajax创建请求并处理
+		// 	var request = new XMLHttpRequest();
+		// 	request.open("POST","server.php");
+		// 	var data = "name=" + document.getElementById("staff-name").value + "&number=" + document.getElementById("staff-number").value + "&sex=" + document.getElementById("staff-sex").value + "&job=" + document.getElementById("staff-job").value;
+		// 	request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+		// 	request.send(data);
+		// 	request.onreadystatechange = function(){
+		// 		if(request.readyState === 4){
+		// 			if(request.status === 200){
+		// 				// document.getElementById("create-result").innerHTML = request.responseText;
+		// 				var data = JSON.parse(request.responseText);
+		// 				if(data.success){
+		// 					document.getElementById("create-result").innerHTML = data.msg;
+		// 				}else{
+		// 					document.getElementById("create-result").innerHTML = "出现错误：" + data.msg;
+		// 				}
+		// 			}else{
+		// 				alert("发生错误：" + request.status);
+		// 			}
+		// 		}
+		// 	}
+		// }
+	</script>
+</body>
+</html>
